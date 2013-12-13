@@ -1491,11 +1491,33 @@ function register_admindept_tax() {
 	}
 	add_action('init', 'register_admindept_tax');
 
-	function add_admindept_terms() {
-		wp_insert_term('Deans Office', 'admindept',  array('description'=> '','slug' => 'dean'));
-		wp_insert_term('Marketing and Communications', 'admindept',  array('description'=> '','slug' => 'comm'));
-	}
-	add_action('init', 'add_admindept_terms');
+function check_admindept_terms(){
+ 
+        // see if we already have populated any terms
+    $term = get_terms( 'admindept', array( 'hide_empty' => false ) );
+ 
+    // if no terms then lets add our terms
+    if( empty( $term ) ){
+        $terms = define_admindept_terms();
+        foreach( $terms as $term ){
+            if( !term_exists( $term['name'], 'admindept' ) ){
+                wp_insert_term( $term['name'], 'admindept', array( 'slug' => $term['slug'] ) );
+            }
+        }
+    }
+}
+
+add_action( 'init', 'check_admindept_terms' );
+
+function define_admindept_terms(){
+ 
+$terms = array(
+		'0' => array( 'name' => 'Deans Office','slug' => 'dean'),
+		'1' => array( 'name' => 'Marketing and Communications','slug' => 'comm'),
+    );
+ 
+    return $terms;
+}
 
 function register_program_type_tax() {
 		$labels = array(
@@ -1527,13 +1549,34 @@ function register_program_type_tax() {
 	}
 	add_action('init', 'register_program_type_tax');
 
-	function add_program_type_terms() {
-		wp_insert_term('Undergraduate', 'program_type',  array('description'=> '','slug' => 'undergrad_program'));
-		wp_insert_term('Part-time Graduate', 'program_type',  array('description'=> '','slug' => 'part_time_program'));
-		wp_insert_term('Full-time Graduate', 'program_type',  array('description'=> '','slug' => 'full_time_program'));
-	}
-	add_action('init', 'add_program_type_terms');
+function check_program_type_terms(){
+ 
+        // see if we already have populated any terms
+    $term = get_terms( 'program_type', array( 'hide_empty' => false ) );
+ 
+    // if no terms then lets add our terms
+    if( empty( $term ) ){
+        $terms = define_program_type_terms();
+        foreach( $terms as $term ){
+            if( !term_exists( $term['name'], 'program_type' ) ){
+                wp_insert_term( $term['name'], 'program_type', array( 'slug' => $term['slug'] ) );
+            }
+        }
+    }
+}
 
+add_action( 'init', 'check_program_type_terms' );
+
+function define_program_type_terms(){
+ 
+$terms = array(
+		'0' => array( 'name' => 'Undergraduate','slug' => 'undergrad_program'),
+		'1' => array( 'name' => 'Part-time Graduate','slug' => 'part_time_program'),
+		'2' => array( 'name' => 'Full-time Graduate','slug' => 'full_time_program'),
+    );
+ 
+    return $terms;
+}
 add_filter( 'manage_edit-studyfields_columns', 'my_studyfields_columns' ) ;
 
 function my_studyfields_columns( $columns ) {
