@@ -1736,4 +1736,65 @@ function studyfields_add_taxonomy_filters() {
 }
 
 add_action( 'restrict_manage_posts', 'studyfields_add_taxonomy_filters' );
+
+//EVERGREEN ADMIN COLUMNS
+add_filter( 'manage_edit-evergreen_columns', 'my_evergreen_columns' ) ;
+function my_evergreen_columns( $columns ) {
+
+	$columns = array(
+		'cb' => '<input type="checkbox" />',
+		'title' => __( 'Name' ),
+		'subhead' => __( 'Subhead' ),
+		'caption' => __( 'About the Photo' ),
+		'image' => __( 'Image' ),
+		'status' => __( 'Status' ),
+	);
+
+	return $columns;
+}
+
+add_action( 'manage_evergreen_posts_custom_column', 'my_manage_evergreen_columns', 10, 2 );
+
+function my_manage_evergreen_columns( $column, $post_id ) {
+	global $post;
+
+	switch( $column ) {
+
+		case 'image' :
+			
+			/* Get the thumbnail */
+			$thumbnail = get_post_meta($post->ID, 'ecpt_fullimage', true);
+
+			if ( get_post_meta($post->ID, 'ecpt_fullimage', true) ) {
+				echo '<img src="' . $thumbnail . '" width="300" height="200" />';
+				}
+			/* If there is a duration, append 'minutes' to the text string. */
+			else {
+				
+				echo __( 'No Photo' );
+			}
+
+			break;
+		case 'subhead' :
+				the_excerpt();
+		break;
+		case 'caption' :
+			if (get_post_meta($post->ID, 'ecpt_caption_credit', true)) {
+				$caption = get_post_meta($post->ID, 'ecpt_caption_credit', true);
+				$clean_caption = strip_tags($caption);
+					echo $clean_caption;
+			} else {
+				echo 'Photo caption not set';
+			}
+		break;
+		case 'status' :
+			$status = get_post_status($post->ID);
+			echo $status;
+		break;
+		/* Just break out of the switch statement for everything else. */
+		default :
+			break;
+	}
+}
+
 ?>
