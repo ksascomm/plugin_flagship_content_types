@@ -44,7 +44,8 @@ License: GPL2
 			'supports' 			=> $supports,
 			'menu_position' 	=> 5,
 			'taxonomies'		=> $taxonomies,
-			'show_in_nav_menus' => true
+			'show_in_nav_menus' => true,
+			'show_in_rest' => true,
 		 );
 		 register_post_type('studyfields',$post_type_args);
 	}
@@ -71,7 +72,7 @@ function register_evergreen_posttype() {
 		
 		$taxonomies = array();
 		
-		$supports = array('title','editor','custom-fields','revisions');
+		$supports = array('title','editor','custom-fields','revisions', 'thumbnail');
 		
 		$post_type_args = array(
 			'labels' 			=> $labels,
@@ -165,31 +166,31 @@ $imageuploads_3_metabox = array(
 					'std'			=> ''				
 				),
 				array(
-					'name' 			=> 'Tablet Image',
-					'desc' 			=> '',
-					'id' 				=> 'ecpt_tabletimage',
-					'class' 			=> 'ecpt_tabletimage',
-					'type' 			=> 'upload',
-					'rich_editor' 	=> 0,			
-					'max' 			=> 0,
-					'std'			=> ''				
-				),
-				array(
-					'name' 			=> 'Mobile Image',
-					'desc' 			=> '',
-					'id' 				=> 'ecpt_mobileimage',
-					'class' 			=> 'ecpt_mobileimage',
-					'type' 			=> 'upload',
-					'rich_editor' 	=> 0,			
-					'max' 			=> 0,
-					'std'			=> ''				
-				),
-				array(
 					'name' 			=> 'Image Caption and Photo Credit',
 					'desc' 			=> '',
 					'id' 				=> 'ecpt_caption_credit',
 					'class' 			=> 'ecpt_caption_credit',
 					'type' 			=> 'textarea',
+					'rich_editor' 	=> 0,			
+					'max' 			=> 0,
+					'std'			=> ''				
+				),
+				array(
+					'name' 			=> 'Link Destination',
+					'desc' 			=> 'Does this slide link out? If so, paste full the url',
+					'id' 				=> 'ecpt_link_destination',
+					'class' 			=> 'ecpt_link_destination',
+					'type' 			=> 'text',
+					'rich_editor' 	=> 0,			
+					'max' 			=> 0,
+					'std'			=> ''				
+				),
+				array(
+					'name' 			=> 'Button Text',
+					'desc' 			=> 'Text to appear in button link. Please be specific.',
+					'id' 				=> 'ecpt_link_button_text',
+					'class' 			=> 'ecpt_link_button_text',
+					'type' 			=> 'text',
 					'rich_editor' 	=> 0,			
 					'max' 			=> 0,
 					'std'			=> ''				
@@ -229,8 +230,11 @@ function ecpt_show_imageuploads_3_box()	{
 				'<td class="ecpt_field_type_' . str_replace(' ', '_', $field['type']) . '">';
 		switch ($field['type']) {
 			case 'upload':
-				echo '<input type="text" class="ecpt_upload_field" name="', $field['id'], '" id="', $field['id'], '" value="', $meta ? $meta : $field['std'], '" size="30" style="width:80%" /><input class="ecpt_upload_image_button" type="button" value="Upload Image" /><br/>', '', stripslashes($field['desc']);
+				echo '<input type="text" class="ecpt_upload_field" name="', $field['id'], '" id="', $field['id'], '" value="', $meta ? $meta : $field['std'], '" size="30" style="width:80%" /><br/>', '', stripslashes($field['desc']);
 				break;
+			case 'text':
+				echo '<input type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $meta ? $meta : $field['std'], '" size="30" style="width:97%" /><br/>', '', $field['desc'];
+				break;				
 			case 'textarea':
 			
 				if($field['rich_editor'] == 1) {
@@ -303,26 +307,13 @@ $taxonomies_4_metabox = array(
 	'context' => 'side',
 	'priority' => 'high',
 	'fields' => array(
-
-				
 				array(
-					'name' 			=> 'Discipline',
+					'name' 			=> 'Level',
 					'desc' 			=> '',
-					'id' 				=> 'ecpt_discipline',
-					'class' 			=> 'ecpt_discipline',
-					'type' 			=> 'multicheck',
-					'options' => array('humanities','social','natural'),
-					'max' 			=> 0,
-					'std'			=> ''				
-				),
-							
-				array(
-					'name' 			=> 'Structure',
-					'desc' 			=> '',
-					'id' 				=> 'ecpt_structure',
-					'class' 			=> 'ecpt_structure',
+					'id' 				=> 'ecpt_field_level',
+					'class' 			=> 'ecpt_field_level',
 					'type' 			=> 'select',
-					'options' => array('department','interdisciplinary','arts'),
+					'options' => array('undergraduate', 'full-graduate', 'part-graduate'),
 					'max' 			=> 0,
 					'std'			=> ''				
 				),
@@ -1271,7 +1262,7 @@ function ecpt_show_topsection_10_box()	{
 				echo '<input type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $meta ? $meta : $field['std'], '" size="30" style="width:97%" /><br/>', '', stripslashes($field['desc']);
 				break;
 			case 'upload':
-				echo '<input type="text" class="ecpt_upload_field" name="', $field['id'], '" id="', $field['id'], '" value="', $meta ? $meta : $field['std'], '" size="30" style="width:80%" /><input class="ecpt_upload_image_button" type="button" value="Upload Image" /><br/>', '', stripslashes($field['desc']);
+				echo '<input type="text" class="ecpt_upload_field" name="', $field['id'], '" id="', $field['id'], '" value="', $meta ? $meta : $field['std'], '" size="30" style="width:80%" /><br/>', '', stripslashes($field['desc']);
 				break;
 		}
 		echo     '<td>',
@@ -1394,7 +1385,7 @@ function ecpt_show_indexing_11_box()	{
 				'<td class="ecpt_field_type_' . str_replace(' ', '_', $field['type']) . '">';
 		switch ($field['type']) {
 			case 'upload':
-				echo '<input type="text" class="ecpt_upload_field" name="', $field['id'], '" id="', $field['id'], '" value="', $meta ? $meta : $field['std'], '" size="30" style="width:80%" /><input class="ecpt_upload_image_button" type="button" value="Upload Image" /><br/>', '', stripslashes($field['desc']);
+				echo '<input type="text" class="ecpt_upload_field" name="', $field['id'], '" id="', $field['id'], '" value="', $meta ? $meta : $field['std'], '" size="30" style="width:80%" /><br/>', '', stripslashes($field['desc']);
 				break;
 			case 'textarea':
 			
@@ -1544,6 +1535,9 @@ function register_program_type_tax() {
 			'show_tagcloud' 	=> false,
 			'show_in_nav_menus' => false,
 			'rewrite' 			=> array('slug' => 'department', 'with_front' => false ),
+			'show_in_rest'          => true,
+    		'rest_base'             => 'department',
+    		'rest_controller_class' => 'WP_REST_Terms_Controller',
 		 );
 		register_taxonomy('program_type', $pages, $args);
 	}
@@ -1585,8 +1579,6 @@ function my_studyfields_columns( $columns ) {
 		'cb' => '<input type="checkbox" />',
 		'title' => __( 'Name' ),
 		'program_type' => __( 'Program Type' ),
-		'affiliation' => __( 'Affiliation' ),
-		'academicdepartment' => __( 'Department' ),
 		'date' => __( 'Date' ),
 	);
 
@@ -1644,62 +1636,6 @@ function my_manage_studyfields_columns( $column, $post_id ) {
 			}
 
 			break;
-		case 'affiliation' :
-
-			/* Get the program_types for the post. */
-			$terms = get_the_terms( $post_id, 'affiliation' );
-
-			/* If terms were found. */
-			if ( !empty( $terms ) ) {
-
-				$out = array();
-
-				/* Loop through each term, linking to the 'edit posts' page for the specific term. */
-				foreach ( $terms as $term ) {
-					$out[] = sprintf( '<a href="%s">%s</a>',
-						esc_url( add_query_arg( array( 'post_type' => $post->post_type, 'affiliation' => $term->slug ), 'edit.php' ) ),
-						esc_html( sanitize_term_field( 'name', $term->name, $term->term_id, 'affiliation', 'display' ) )
-					);
-				}
-
-				/* Join the terms, separating them with a comma. */
-				echo join( ', ', $out );
-			}
-
-			/* If no terms were found, output a default message. */
-			else {
-				_e( 'No Affiliation' );
-			}
-
-			break;
-		case 'academicdepartment' :
-
-			/* Get the program_types for the post. */
-			$terms = get_the_terms( $post_id, 'academicdepartment' );
-
-			/* If terms were found. */
-			if ( !empty( $terms ) ) {
-
-				$out = array();
-
-				/* Loop through each term, linking to the 'edit posts' page for the specific term. */
-				foreach ( $terms as $term ) {
-					$out[] = sprintf( '<a href="%s">%s</a>',
-						esc_url( add_query_arg( array( 'post_type' => $post->post_type, 'academicdepartment' => $term->slug ), 'edit.php' ) ),
-						esc_html( sanitize_term_field( 'name', $term->name, $term->term_id, 'academicdepartment', 'display' ) )
-					);
-				}
-
-				/* Join the terms, separating them with a comma. */
-				echo join( ', ', $out );
-			}
-
-			/* If no terms were found, output a default message. */
-			else {
-				_e( 'No academicdepartment' );
-			}
-
-			break;
 		/* Just break out of the switch statement for everything else. */
 		default :
 			break;
@@ -1744,8 +1680,7 @@ function my_evergreen_columns( $columns ) {
 	$columns = array(
 		'cb' => '<input type="checkbox" />',
 		'title' => __( 'Name' ),
-		'subhead' => __( 'Subhead' ),
-		'caption' => __( 'About the Photo' ),
+		'subhead' => __( 'Content' ),
 		'image' => __( 'Image' ),
 		'status' => __( 'Status' ),
 	);
@@ -1763,15 +1698,15 @@ function my_manage_evergreen_columns( $column, $post_id ) {
 		case 'image' :
 			
 			/* Get the thumbnail */
-			$thumbnail = get_post_meta($post->ID, 'ecpt_fullimage', true);
+			//$thumbnail = get_post_meta($post->ID, 'ecpt_fullimage', true);
 
-			if ( get_post_meta($post->ID, 'ecpt_fullimage', true) ) {
-				echo '<img src="' . $thumbnail . '" width="300" height="200" />';
+			if(has_post_thumbnail( $post->ID )) {
+				echo the_post_thumbnail('medium');
 				}
 			/* If there is a duration, append 'minutes' to the text string. */
 			else {
 				
-				echo __( 'No Photo' );
+				echo __( 'No Thumbnail' );
 			}
 
 			break;
@@ -1795,6 +1730,26 @@ function my_manage_evergreen_columns( $column, $post_id ) {
 		default :
 			break;
 	}
+}
+
+
+add_action( 'rest_api_init', 'create_api_posts_meta_field' ); 
+function create_api_posts_meta_field() {
+ 
+    // register_rest_field ( 'name-of-post-type', 'name-of-field-to-return', array-of-callbacks-and-schema() )
+    register_rest_field( 'studyfields', 'post_meta_fields', array(
+           'get_callback'    => 'get_post_meta_for_api',
+           'schema'          => null,
+        )
+    );
+}
+ 
+function get_post_meta_for_api( $object ) {
+    //get the id of the post object array
+    $post_id = $object['id'];
+ 
+    //return the post meta
+    return get_post_meta( $post_id );
 }
 
 ?>
